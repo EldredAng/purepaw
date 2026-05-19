@@ -26,13 +26,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default async function StudentsPage() {
+export default async function StudentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    search?: string;
+  }>;
+}) {
   const supabase = await createClient();
 
-  const { data: students } = await supabase
+  const { search } = await searchParams;
+
+  let query = supabase
     .from("students")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (search) {
+    query = query.or(
+      `full_name.ilike.%${search}%,email.ilike.%${search}%`
+    );
+  }
+
+  const { data: students } = await query;
 
   return (
     <div className="space-y-8">
@@ -158,6 +176,13 @@ export default async function StudentsPage() {
         </CardHeader>
 
         <CardContent>
+          <form className="mb-6">
+            <Input
+              name="search"
+              placeholder="Search students..."
+              defaultValue={search || ""}
+            />
+          </form>
           <Table>
             <TableHeader>
               <TableRow>

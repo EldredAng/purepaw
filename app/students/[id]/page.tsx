@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 
+import { updateStudent } from "./actions";
+
 import {
   Card,
   CardContent,
@@ -40,7 +42,7 @@ export default async function StudentDetailPage({
         </h1>
 
         <p className="text-muted-foreground mt-2">
-          Manage student information.
+          Update student information.
         </p>
       </div>
 
@@ -51,83 +53,135 @@ export default async function StudentDetailPage({
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium">
-              Full Name
-            </label>
+        <CardContent>
+          <form
+            action={async (formData) => {
+              "use server";
 
-            <Input
-              value={student.full_name || ""}
-              readOnly
-            />
-          </div>
+              await updateStudent(id, formData);
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
+            <div>
+              <label className="text-sm font-medium">
+                Full Name
+              </label>
 
-          <div>
-            <label className="text-sm font-medium">
-              Email
-            </label>
+              <Input
+                name="full_name"
+                defaultValue={student.full_name || ""}
+              />
+            </div>
 
-            <Input
-              value={student.email || ""}
-              readOnly
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">
+                Email
+              </label>
 
-          <div>
-            <label className="text-sm font-medium">
-              Phone
-            </label>
+              <Input
+                name="email"
+                defaultValue={student.email || ""}
+              />
+            </div>
 
-            <Input
-              value={student.phone || ""}
-              readOnly
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">
+                Phone
+              </label>
 
-          <div>
-            <label className="text-sm font-medium">
-              Course
-            </label>
+              <Input
+                name="phone"
+                defaultValue={student.phone || ""}
+              />
+            </div>
 
-            <Input
-              value={student.course_name || ""}
-              readOnly
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">
+                Course
+              </label>
 
-          <div>
-            <label className="text-sm font-medium">
-              Date of Birth
-            </label>
+              <Input
+                name="course_name"
+                defaultValue={student.course_name || ""}
+              />
+            </div>
 
-            <Input
-              value={student.dob || ""}
-              readOnly
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">
+                Date of Birth
+              </label>
 
-          <div>
-            <label className="text-sm font-medium">
-              Study Mode
-            </label>
+              <Input
+                name="dob"
+                type="date"
+                defaultValue={student.dob || ""}
+              />
+            </div>
 
-            <Input
-              value={student.study_mode || ""}
-              readOnly
-            />
-          </div>
+            <div>
+              <label className="text-sm font-medium">
+                Study Mode
+              </label>
 
-          <div className="md:col-span-2">
-            <label className="text-sm font-medium">
-              Address
-            </label>
+              <select
+                name="study_mode"
+                defaultValue={student.study_mode || ""}
+                className="w-full border rounded-xl px-4 py-3 bg-background"
+              >
+                <option value="full-time">
+                  Full Time
+                </option>
 
-            <Input
-              value={student.address || ""}
-              readOnly
-            />
-          </div>
+                <option value="part-time">
+                  Part Time
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">
+                Grooming Experience
+              </label>
+
+              <select
+                name="grooming_experience"
+                defaultValue={
+                  student.grooming_experience
+                    ? "yes"
+                    : "no"
+                }
+                className="w-full border rounded-xl px-4 py-3 bg-background"
+              >
+                <option value="yes">
+                  Yes
+                </option>
+
+                <option value="no">
+                  No
+                </option>
+              </select>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="text-sm font-medium">
+                Address
+              </label>
+
+              <Input
+                name="address"
+                defaultValue={student.address || ""}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="bg-black text-white rounded-xl px-6 py-3"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

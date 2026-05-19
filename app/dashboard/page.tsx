@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+
 import {
   Card,
   CardContent,
@@ -5,7 +7,39 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+
+  const { count: studentCount } = await supabase
+    .from("students")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
+  const { count: attendanceCount } = await supabase
+    .from("attendance")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
+  const { count: presentCount } = await supabase
+    .from("attendance")
+    .select("*", {
+      count: "exact",
+      head: true,
+    })
+    .eq("status", "present");
+
+  const { count: absentCount } = await supabase
+    .from("attendance")
+    .select("*", {
+      count: "exact",
+      head: true,
+    })
+    .eq("status", "absent");
+
   return (
     <div className="space-y-8">
       <div>
@@ -25,37 +59,45 @@ export default function DashboardPage() {
           </CardHeader>
 
           <CardContent>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">
+              {studentCount || 0}
+            </p>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle>Total Pets</CardTitle>
+            <CardTitle>Total Attendance</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">
+              {attendanceCount || 0}
+            </p>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle>Attendance</CardTitle>
+            <CardTitle>Present</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-4xl font-bold">0%</p>
+            <p className="text-4xl font-bold">
+              {presentCount || 0}
+            </p>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle>Study Materials</CardTitle>
+            <CardTitle>Absent</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">
+              {absentCount || 0}
+            </p>
           </CardContent>
         </Card>
       </div>
